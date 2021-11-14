@@ -9,7 +9,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.veselove.weatherapplicationtest.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class WeatherActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 

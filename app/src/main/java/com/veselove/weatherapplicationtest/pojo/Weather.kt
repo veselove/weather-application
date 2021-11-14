@@ -1,4 +1,4 @@
-package com.veselove.weatherapplicationtest.models
+package com.veselove.weatherapplicationtest.pojo
 
 data class Weather(
     val description: String,
