@@ -67,13 +67,15 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
 
             for (n in weatherResponse.list.indices) {
 
-                weatherMutableList[n].weatherIcon = iconPicker(weatherResponse.list[0].weather[0].description,
-                    weatherResponse.list[0].sys.pod)
-                weatherMutableList[n].dayOfWeek = unixToDayOfWeekConventer(weatherResponse.list[n].dt)
-                weatherMutableList[n].time = unixToTimeConventer(weatherResponse.list[n].dt)
-                weatherMutableList[n].temperature = weatherResponse.list[n].main.temp.toInt().toString()
+                weatherMutableList[n].weatherIcon = iconPicker(weatherResponse.list[n].weather[0].description,
+                    weatherResponse.list[n].sys.pod)
+                weatherMutableList[n].dayOfWeek = unixToDayOfWeekConverter(weatherResponse.list[n].dt)
+                weatherMutableList[n].time = unixToTimeConverter(weatherResponse.list[n].dt)
+                weatherMutableList[n].temperature = weatherResponse.list[n].main.temp.toInt().toString() + "°"
                 weatherMutableList[n].weatherDescription = weatherResponse.list[n].weather[0].description
             }
+
+            weatherMutableList[0].dayOfWeek = "today"
 
             val immutableWeatherList = Collections.unmodifiableList(weatherMutableList)
 
@@ -119,6 +121,9 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
             "broken clouds" -> if (partOfDay == "n")
                 R.mipmap.broken_clouds_night else
                 R.mipmap.broken_clouds_day
+            "overcast clouds" -> if (partOfDay == "n")
+                R.mipmap.broken_clouds_night else
+                R.mipmap.broken_clouds_day
             "shower rain" -> if (partOfDay == "n")
                 R.mipmap.shower_rain_night else
                 R.mipmap.shower_rain_day
@@ -138,7 +143,7 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
         }
     }
 
-    private fun unixToDayOfWeekConventer(time: Int): String {
+    private fun unixToDayOfWeekConverter(time: Int): String {
         val date = Date(time.toLong() * 1000)
         val calendar = Calendar.getInstance()
         calendar.time = date
@@ -154,7 +159,7 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
         }
     }
 
-    private fun unixToTimeConventer(time: Int): String {
+    private fun unixToTimeConverter(time: Int): String {
         val date = Date(time.toLong() * 1000)
         val calendar = Calendar.getInstance()
         calendar.time = date

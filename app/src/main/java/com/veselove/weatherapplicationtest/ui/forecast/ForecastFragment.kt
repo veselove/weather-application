@@ -1,52 +1,79 @@
 package com.veselove.weatherapplicationtest.ui.forecast
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.veselove.weatherapplicationtest.ForecastAdapter
 import com.veselove.weatherapplicationtest.WeatherContract
+import com.veselove.weatherapplicationtest.WeatherModel
 import com.veselove.weatherapplicationtest.WeatherPresenter
 import com.veselove.weatherapplicationtest.databinding.FragmentForecastBinding
+import com.veselove.weatherapplicationtest.pojo.ForecastModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
-//class ForecastFragment : Fragment(), WeatherContract.View {
-//
-//    private var _binding: FragmentForecastBinding? = null
-//    internal lateinit var presenter: WeatherContract.Presenter
-//
-//    // This property is only valid between onCreateView and
-//    // onDestroyView.
-//    private val binding get() = _binding!!
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater,
-//        container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        _binding = FragmentForecastBinding.inflate(inflater, container, false)
-//        val root: View = binding.root
-//
-//        //imageView = findViewById(R.id.imageView)
-//        //button = findViewById(R.id.button)
-//        init()
-//
-//        return root
-//    }
-//
-//    private fun init() {
-//        //this.presenter = WeatherPresenter(this)
-//    }
-//
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        _binding = null
-//    }
-//
-//    override fun displayWeatherState() {
-//        TODO("Not yet implemented")
-//    }
-//
-//    override fun onInitView() {
-//        TODO("Not yet implemented")
-//    }
-//}
+class ForecastFragment : Fragment(), WeatherContract.View {
+
+    private var _binding: FragmentForecastBinding? = null
+    lateinit var presenter: WeatherContract.Presenter
+    lateinit var model: WeatherContract.Model
+
+    private var adapter: RecyclerView.Adapter<ForecastAdapter.ForecastHolder>? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentForecastBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        model = WeatherModel()
+        presenter = WeatherPresenter(this, model, Schedulers.io(), AndroidSchedulers.mainThread())
+        presenter.init()
+        presenter.getWeatherData()
+        init()
+
+        return root
+    }
+
+    private fun init() {
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onInitView() {
+        return
+    }
+
+    override fun handleLoaderView(isLoading: Boolean) {
+        return
+    }
+
+    override fun showWeatherData(forecastModel: ForecastModel) {
+        Log.i("tempLog", "second fragment works")
+        binding.forecastRV.apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = ForecastAdapter(forecastModel)
+        }
+    }
+    override fun showErrorMessage(errorMsg: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun finish() {
+        TODO("Not yet implemented")
+    }
+}
