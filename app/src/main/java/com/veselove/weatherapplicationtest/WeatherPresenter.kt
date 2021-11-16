@@ -67,8 +67,7 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
 
             for (n in weatherResponse.list.indices) {
 
-                weatherMutableList[n].weatherIcon = iconPicker(weatherResponse.list[n].weather[0].description,
-                    weatherResponse.list[n].sys.pod)
+                weatherMutableList[n].weatherIcon = iconPicker(weatherResponse.list[n].weather[0].icon)
                 weatherMutableList[n].dayOfWeek = unixToDayOfWeekConverter(weatherResponse.list[n].dt)
                 weatherMutableList[n].time = unixToTimeConverter(weatherResponse.list[n].dt)
                 weatherMutableList[n].temperature = weatherResponse.list[n].main.temp.toInt().toString() + "°"
@@ -107,38 +106,26 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
         }
     }
 
-    private fun iconPicker(weatherDescription: String, partOfDay: String): Int {
-        return when (weatherDescription) {
-            "clear sky" -> if (partOfDay == "n")
-                R.mipmap.clear_sky_night else
-                R.mipmap.clear_sky_day
-            "few clouds" -> if (partOfDay == "n")
-                R.mipmap.few_clouds_night else
-                R.mipmap.few_clouds_day
-            "scattered clouds" -> if (partOfDay == "n")
-                R.mipmap.scattered_clouds_night else
-                R.mipmap.scattered_clouds_day
-            "broken clouds" -> if (partOfDay == "n")
-                R.mipmap.broken_clouds_night else
-                R.mipmap.broken_clouds_day
-            "overcast clouds" -> if (partOfDay == "n")
-                R.mipmap.broken_clouds_night else
-                R.mipmap.broken_clouds_day
-            "shower rain" -> if (partOfDay == "n")
-                R.mipmap.shower_rain_night else
-                R.mipmap.shower_rain_day
-            "rain" -> if (partOfDay == "n")
-                R.mipmap.rain_night else
-                R.mipmap.rain_day
-            "thunderstorm" -> if (partOfDay == "n")
-                R.mipmap.thunderstorm_night else
-                R.mipmap.thunderstorm_day
-            "snow" -> if (partOfDay == "n")
-                R.mipmap.snow_night else
-                R.mipmap.snow_day
-            "mist" -> if (partOfDay == "n")
-                R.mipmap.mist_night else
-                R.mipmap.mist_day
+    private fun iconPicker(icon: String): Int {
+        return when (icon) {
+            "01d" -> R.mipmap.clear_sky_day
+            "01n" -> R.mipmap.clear_sky_night
+            "02d" -> R.mipmap.few_clouds_day
+            "02n" -> R.mipmap.few_clouds_night
+            "03d" -> R.mipmap.scattered_clouds_day
+            "03n" -> R.mipmap.scattered_clouds_night
+            "04d" -> R.mipmap.broken_clouds_day
+            "04n" -> R.mipmap.broken_clouds_night
+            "09d" -> R.mipmap.shower_rain_day
+            "09n" -> R.mipmap.shower_rain_night
+            "10d" -> R.mipmap.rain_day
+            "10n" -> R.mipmap.rain_night
+            "11d" -> R.mipmap.thunderstorm_day
+            "11n" -> R.mipmap.thunderstorm_night
+            "13d" -> R.mipmap.snow_day
+            "13n" -> R.mipmap.snow_night
+            "50d" -> R.mipmap.mist_day
+            "50n" -> R.mipmap.mist_night
             else -> R.mipmap.error
         }
     }
