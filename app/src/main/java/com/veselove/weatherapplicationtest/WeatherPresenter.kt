@@ -1,14 +1,13 @@
 package com.veselove.weatherapplicationtest
 
 import android.util.Log
-import com.google.gson.Gson
+import com.veselove.weatherapplicationtest.pojo.ForecastModel
+import com.veselove.weatherapplicationtest.pojo.ForecastUnit
 import com.veselove.weatherapplicationtest.pojo.WeatherResponse
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
-import retrofit2.HttpException
-import java.io.IOError
-import java.io.IOException
+import java.util.*
 
 class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model,
                        processTread: Scheduler, mainThread: Scheduler
@@ -40,6 +39,7 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
                     Log.i("tempLog", "RxJava Observer says onNext")
                 }
 
+
                 override fun onError(e: Throwable) {
                     Log.i("tempLog", "RxJava Observer says onError")
                     Log.i("tempLog", "${e.message}")
@@ -48,33 +48,131 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
         ))
     }
 
-    override fun handleWeatherResponse(weatherResponse: WeatherResponse?) {
-        if (weatherResponse != null) {
-            Log.i("tempLog", "1 " + weatherResponse.list[0].weather[0].description)
-            Log.i("tempLog", "2 " + weatherResponse.city.name)
-            Log.i("tempLog", "3 " + weatherResponse.city.country)
-            Log.i("tempLog", "4 " + weatherResponse.list[0].main.temp.toString())
-            Log.i("tempLog", "5 " + weatherResponse.list[0].weather[0].main)
-            Log.i("tempLog", "6 " + weatherResponse.list[0].main.humidity.toString())
-//            Log.i("tempLog", "7 " + weatherResponse.list[0].rain.`3h`.toString())
-            Log.i("tempLog", "8 " + weatherResponse.list[0].main.grnd_level.toString())  //pressure
-            Log.i("tempLog", "9 " + weatherResponse.list[0].wind.speed.toString())
-            Log.i("tempLog", "10 " + weatherResponse.list[0].wind.deg.toString())
+    override fun handleWeatherResponse(weatherResponse: WeatherResponse) {
 
-            Log.i("tempLog", "10 " + weatherResponse.list[0].dt_txt)  //we also can use unix format
-            Log.i("tempLog", "10 " + weatherResponse.list[0].sys.pod)  //day/night indicator
+            val location = weatherResponse.city.name + ", " + weatherResponse.city.country
+            val weatherDescription = weatherResponse.list[0].weather[0].main
+            val humidity = weatherResponse.list[0].main.humidity
+            val pressureGroundLevel = weatherResponse.list[0].main.grnd_level
+            val windSpeed = weatherResponse.list[0].wind.speed.toInt()
+            val rainVolume = if (weatherResponse.list[0].weather[0].main == "Rain") {
+                weatherResponse.list[0].rain.`3h`.toString()
+            } else {"0.0"}
+            val windDirection = azimuthToAbbreviationConventer(weatherResponse.list[0].wind.deg)
+            val weatherMutableList = mutableListOf<ForecastUnit>()
 
+            for (i in weatherResponse.list.indices) {       //не очень хороший способ увеличить размер до 40
+                weatherMutableList.add(ForecastUnit())
+            }
 
-//            for (i in 0..39) {
-//                if (weatherResponse.list[i].weather[0].main == "Rain") {
-//                    Log.i("tempLog", "rain 3d $i " + weatherResponse.list[i].rain.`3h`)
-//                }
-//            }
+            for (n in weatherResponse.list.indices) {
 
+                weatherMutableList[n].weatherIcon = iconPicker(weatherResponse.list[0].weather[0].description,
+                    weatherResponse.list[0].sys.pod)
+                weatherMutableList[n].dayOfWeek = unixToDayOfWeekConventer(weatherResponse.list[n].dt)
+                weatherMutableList[n].time = unixToTimeConventer(weatherResponse.list[n].dt)
+                weatherMutableList[n].temperature = weatherResponse.list[n].main.temp.toInt().toString()
+                weatherMutableList[n].weatherDescription = weatherResponse.list[n].weather[0].description
+            }
 
+            val immutableWeatherList = Collections.unmodifiableList(weatherMutableList)
 
-            view.setLocation("Minsk, BY")
-            view.showWeatherData(weatherResponse)
+            val forecastModel = ForecastModel(location,
+                immutableWeatherList,
+                weatherDescription,
+                humidity,
+                rainVolume,
+                pressureGroundLevel,
+                windSpeed,
+                windDirection)
+
+            view.showWeatherData(forecastModel)
+            showModelInLog(forecastModel)
+    }
+
+    private fun azimuthToAbbreviationConventer(azimuth: Int): String {
+        return when (azimuth) {
+            in 0..22 -> "N"
+            in 23..67 -> "NE"
+            in 68..112 -> "E"
+            in 113..157 -> "SE"
+            in 158..202 -> "S"
+            in 203..247 -> "SW"
+            in 248..292 -> "W"
+            in 293..337 -> "NW"
+            in 338..360 -> "N"
+            else -> "N/A"
+        }
+    }
+
+    private fun iconPicker(weatherDescription: String, partOfDay: String): Int {
+        return when (weatherDescription) {
+            "clear sky" -> if (partOfDay == "n")
+                R.mipmap.clear_sky_night else
+                R.mipmap.clear_sky_day
+            "few clouds" -> if (partOfDay == "n")
+                R.mipmap.few_clouds_night else
+                R.mipmap.few_clouds_day
+            "scattered clouds" -> if (partOfDay == "n")
+                R.mipmap.scattered_clouds_night else
+                R.mipmap.scattered_clouds_day
+            "broken clouds" -> if (partOfDay == "n")
+                R.mipmap.broken_clouds_night else
+                R.mipmap.broken_clouds_day
+            "shower rain" -> if (partOfDay == "n")
+                R.mipmap.shower_rain_night else
+                R.mipmap.shower_rain_day
+            "rain" -> if (partOfDay == "n")
+                R.mipmap.rain_night else
+                R.mipmap.rain_day
+            "thunderstorm" -> if (partOfDay == "n")
+                R.mipmap.thunderstorm_night else
+                R.mipmap.thunderstorm_day
+            "snow" -> if (partOfDay == "n")
+                R.mipmap.snow_night else
+                R.mipmap.snow_day
+            "mist" -> if (partOfDay == "n")
+                R.mipmap.mist_night else
+                R.mipmap.mist_day
+            else -> R.mipmap.error
+        }
+    }
+
+    private fun unixToDayOfWeekConventer(time: Int): String {
+        val date = Date(time.toLong() * 1000)
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        return when (calendar.get(Calendar.DAY_OF_WEEK)) {
+            1 -> "SUNDAY"
+            2 -> "MONDAY"
+            3 -> "TUESDAY"
+            4 -> "WEDNESDAY"
+            5 -> "THURSDAY"
+            6 -> "FRIDAY"
+            7 -> "SATURDAY"
+            else -> "N/A"
+        }
+    }
+
+    private fun unixToTimeConventer(time: Int): String {
+        val date = Date(time.toLong() * 1000)
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        return calendar.get(Calendar.HOUR_OF_DAY).toString() + ":00"
+    }
+
+    private fun showModelInLog(model: ForecastModel) {
+        Log.i("weatherModelInfo", model.weatherDescription + " " +
+                model.humidity + " " +
+                model.pressureGroundLevel + " " +
+                model.windSpeed + " " +
+                model.windDirection)
+        for (n in model.weather.indices) {
+            Log.i("weatherModelInfo", model.weather[n].weatherIcon.toString() + " " +
+            model.weather[n].dayOfWeek + " " +
+            model.weather[n].time + " " +
+            model.weather[n].temperature + " " +
+            model.weather[n].weatherDescription)
         }
     }
 

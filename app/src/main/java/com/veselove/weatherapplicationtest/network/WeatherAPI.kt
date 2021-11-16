@@ -6,7 +6,7 @@ import retrofit2.http.GET
 
 interface WeatherAPI {
 
-    @GET("data/2.5/forecast?lat=53.893009&lon=27.567444&appid=f4a137c477b12cff80c2b7c6ac113f4d")
+    @GET("data/2.5/forecast?lat=53.893009&lon=27.567444&appid=f4a137c477b12cff80c2b7c6ac113f4d&units=metric")
     fun getWeatherInfo(): Observable<WeatherResponse>
 
 

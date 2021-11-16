@@ -1,6 +1,5 @@
 package com.veselove.weatherapplicationtest.ui.today
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.veselove.weatherapplicationtest.*
 import com.veselove.weatherapplicationtest.databinding.FragmentTodayBinding
-import com.veselove.weatherapplicationtest.pojo.WeatherResponse
+import com.veselove.weatherapplicationtest.pojo.ForecastModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -62,78 +61,30 @@ class TodayFragment : Fragment(), WeatherContract.View {
         TODO("Not yet implemented")
     }
 
-    override fun showWeatherData(weatherResponse: WeatherResponse) {
-        when (weatherResponse.list[0].weather[0].description) {
-            "clear sky" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.clear_sky_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.clear_sky_day)
-            "few clouds" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.few_clouds_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.few_clouds_day)
-            "scattered clouds" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.scattered_clouds_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.scattered_clouds_day)
-            "broken clouds" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.broken_clouds_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.broken_clouds_day)
-            "shower rain" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.shower_rain_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.shower_rain_day)
-            "rain" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.rain_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.rain_day)
-            "thunderstorm" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.thunderstorm_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.thunderstorm_day)
-            "snow" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.snow_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.snow_day)
-            "mist" -> if (weatherResponse.list[0].sys.pod == "n")
-                binding.ivWeatherMain.setImageResource(R.mipmap.mist_night) else
-                binding.ivWeatherMain.setImageResource(R.mipmap.mist_day)
-            else -> binding.ivWeatherMain.setImageResource(R.mipmap.error)
-        }
+    override fun showWeatherData(forecastModel: ForecastModel) {
 
-        binding.tvTemperature.text =
-            getString(R.string.temperature, weatherResponse.list[0].main.temp.toString())
+        binding.tvLocation.text = forecastModel.location
 
-        binding.tvWeatherMain.text = weatherResponse.list[0].weather[0].main
+        binding.ivWeatherMain.setImageResource(forecastModel.weather[0].weatherIcon)
 
-        binding.tvHumidity.text =
-            getString(R.string.humidity, weatherResponse.list[0].main.humidity)
+        binding.tvTemperature.text = getString(R.string.temperature, forecastModel.weather[0].temperature)
 
-        if (weatherResponse.list[0].weather[0].main == "Rain") {
-                binding.tvRainVolume.text =
-                    getString(R.string.rain_volume, weatherResponse.list[0].rain.`3h`.toString())
-        } else {
-            binding.tvRainVolume.text =
-                getString(R.string.rain_volume, "0.0")
-        }
+        binding.tvWeatherMain.text = forecastModel.weatherDescription
 
-        binding.tvPressureGroundLevel.text =
-            getString(R.string.pressure_ground, weatherResponse.list[0].main.grnd_level)
+        binding.tvHumidity.text = getString(R.string.humidity, forecastModel.humidity)
 
-        binding.tvWindSpeed.text =
-            getString(R.string.wind_speed, weatherResponse.list[0].wind.speed.toInt())
-        when (weatherResponse.list[0].wind.deg) {
-            in 0..22 -> binding.tvWindDirection.text = "N"
-            in 23..67 -> binding.tvWindDirection.text = "NE"
-            in 68..112 -> binding.tvWindDirection.text = "E"
-            in 113..157 -> binding.tvWindDirection.text = "SE"
-            in 158..202 -> binding.tvWindDirection.text = "S"
-            in 203..247 -> binding.tvWindDirection.text = "SW"
-            in 248..292 -> binding.tvWindDirection.text = "W"
-            in 293..337 -> binding.tvWindDirection.text ="NW"
-            in 338..360 -> binding.tvWindDirection.text ="N"
-        }
+        binding.tvRainVolume.text = getString(R.string.rain_volume, forecastModel.rainVolume)
+
+        binding.tvPressureGroundLevel.text = getString(R.string.pressure_ground, forecastModel.pressureGroundLevel)
+
+        binding.tvWindSpeed.text = getString(R.string.wind_speed, forecastModel.windSpeed)
+
+        binding.tvWindDirection.text = forecastModel.windDirection
+
     }
 
     override fun showErrorMessage(errorMsg: String?) {
         TODO("Not yet implemented")
-    }
-
-    override fun setLocation(location: String?) {
-        binding.tvCityName.text = location
     }
 
     override fun finish() {
