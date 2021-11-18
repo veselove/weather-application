@@ -1,5 +1,6 @@
 package com.veselove.weatherapplicationtest.ui.forecast
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,11 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.veselove.weatherapplicationtest.ForecastAdapter
-import com.veselove.weatherapplicationtest.WeatherContract
-import com.veselove.weatherapplicationtest.WeatherModel
-import com.veselove.weatherapplicationtest.WeatherPresenter
+import com.veselove.weatherapplicationtest.*
 import com.veselove.weatherapplicationtest.databinding.FragmentForecastBinding
 import com.veselove.weatherapplicationtest.pojo.ForecastModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -22,8 +19,6 @@ class ForecastFragment : Fragment(), WeatherContract.View {
     private var _binding: FragmentForecastBinding? = null
     lateinit var presenter: WeatherContract.Presenter
     lateinit var model: WeatherContract.Model
-
-    private var adapter: RecyclerView.Adapter<ForecastAdapter.ForecastHolder>? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -69,6 +64,7 @@ class ForecastFragment : Fragment(), WeatherContract.View {
             adapter = ForecastAdapter(forecastModel)
         }
     }
+
     override fun showErrorMessage(errorMsg: String?) {
         TODO("Not yet implemented")
     }

@@ -9,6 +9,8 @@ import java.util.*
 
 class WeatherModel() : WeatherContract.Model {
 
-    override fun loadForecast(): Observable<WeatherResponse> = WeatherRetrofitInstance.api.getWeatherInfo()
+    override fun loadForecast(latitude: Double, longitude: Double, apiKey: String, units: String):
+            Observable<WeatherResponse> =
+        WeatherRetrofitInstance.api.getWeatherInfo(latitude, longitude, apiKey, units)
 
 }

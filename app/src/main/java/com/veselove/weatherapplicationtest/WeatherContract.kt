@@ -1,5 +1,5 @@
 package com.veselove.weatherapplicationtest
-
+git add
 import com.veselove.weatherapplicationtest.pojo.ForecastModel
 import com.veselove.weatherapplicationtest.pojo.WeatherResponse
 import io.reactivex.Observable
@@ -21,6 +21,6 @@ interface WeatherContract {
     }
 
     interface Model {
-        fun loadForecast(): Observable<WeatherResponse>
+        fun loadForecast(latitude: Double, longitude: Double, apiKey: String, units: String): Observable<WeatherResponse>
     }
 }

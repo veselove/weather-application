@@ -3,28 +3,20 @@ package com.veselove.weatherapplicationtest.network
 import com.veselove.weatherapplicationtest.pojo.WeatherResponse
 import io.reactivex.Observable
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface WeatherAPI {
 
-    @GET("data/2.5/forecast?lat=53.893009&lon=27.567444&appid=f4a137c477b12cff80c2b7c6ac113f4d&units=metric")
-    fun getWeatherInfo(): Observable<WeatherResponse>
-
-
-
-
-
-
-
-
-
-
-//    fun getWeatherInfo(
-//        @Query("q")
-//        latitude: Double,
-//        @Query("page")
-//        longitude: Double,
-//        @Query("apikey")
-//        apiKey: String = API_KEY
-//    ): Response<weatherResponse>
+    @GET("data/2.5/forecast")
+    fun getWeatherInfo(
+        @Query("lat")
+        latitude: Double,
+        @Query("lon")
+        longitude: Double,
+        @Query("appid")
+        apiKey: String,
+        @Query("units")
+        units: String
+    ): Observable<WeatherResponse>
 
 }

@@ -26,7 +26,7 @@ class TodayFragment : Fragment(), WeatherContract.View {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentTodayBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -42,7 +42,7 @@ class TodayFragment : Fragment(), WeatherContract.View {
 
 //    override fun onAttach(context: Context) {
 //        super.onAttach(context)
-//        this.presenter = WeatherPresenter(context)
+//        location = GPSLocation(context)
 //    }
 //
 //    private fun init() {

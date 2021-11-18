@@ -4,6 +4,8 @@ import android.util.Log
 import com.veselove.weatherapplicationtest.pojo.ForecastModel
 import com.veselove.weatherapplicationtest.pojo.ForecastUnit
 import com.veselove.weatherapplicationtest.pojo.WeatherResponse
+import com.veselove.weatherapplicationtest.utils.Constants.Companion.API_KEY
+import com.veselove.weatherapplicationtest.utils.Coord
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -11,13 +13,14 @@ import java.util.*
 
 class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model,
                        processTread: Scheduler, mainThread: Scheduler
-) : WeatherContract.Presenter {
+) : WeatherContract.Presenter{
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     var view: WeatherContract.View = mView
     var model: WeatherContract.Model = model
     var processThread: Scheduler = processTread
     var mainThread: Scheduler = mainThread
+
     /**
      * Initializes the basic UI based on requirement.
      */
@@ -26,8 +29,10 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
     }
 
     override fun getWeatherData() {
+        val apiKey: String = API_KEY
+        val units = "metric"
         compositeDisposable.add(
-            model.loadForecast().subscribeOn(processThread).observeOn(
+            model.loadForecast(Coord.lat, Coord.lon, apiKey, units).subscribeOn(processThread).observeOn(
                 mainThread
             ).subscribeWith(object : DisposableObserver<WeatherResponse>() {
                 override fun onComplete() {
@@ -38,7 +43,6 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
                     handleWeatherResponse(weatherResponse)
                     Log.i("tempLog", "RxJava Observer says onNext")
                 }
-
 
                 override fun onError(e: Throwable) {
                     Log.i("tempLog", "RxJava Observer says onError")
@@ -58,7 +62,8 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
             val rainVolume = if (weatherResponse.list[0].weather[0].main == "Rain") {
                 weatherResponse.list[0].rain.`3h`.toString()
             } else {"0.0"}
-            val windDirection = azimuthToAbbreviationConventer(weatherResponse.list[0].wind.deg)
+            val windDirection = azimuthToAbbreviationConverter(weatherResponse.list[0].wind.deg)
+
             val weatherMutableList = mutableListOf<ForecastUnit>()
 
             for (i in weatherResponse.list.indices) {       //не очень хороший способ увеличить размер до 40
@@ -91,7 +96,7 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
             showModelInLog(forecastModel)
     }
 
-    private fun azimuthToAbbreviationConventer(azimuth: Int): String {
+    private fun azimuthToAbbreviationConverter(azimuth: Int): String {
         return when (azimuth) {
             in 0..22 -> "N"
             in 23..67 -> "NE"
