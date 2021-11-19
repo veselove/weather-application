@@ -1,4 +1,5 @@
 package com.veselove.weatherapplicationtest
+
 import com.veselove.weatherapplicationtest.pojo.ForecastModel
 import com.veselove.weatherapplicationtest.pojo.WeatherResponse
 import io.reactivex.Observable

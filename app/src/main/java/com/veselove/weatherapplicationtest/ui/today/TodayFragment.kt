@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.veselove.weatherapplicationtest.*
 import com.veselove.weatherapplicationtest.databinding.FragmentTodayBinding
 import com.veselove.weatherapplicationtest.pojo.ForecastModel
@@ -15,8 +16,8 @@ import io.reactivex.schedulers.Schedulers
 class TodayFragment : Fragment(), WeatherContract.View {
 
     private var _binding: FragmentTodayBinding? = null
-    lateinit var presenter: WeatherContract.Presenter
-    lateinit var model: WeatherContract.Model
+    private lateinit var presenter: WeatherContract.Presenter
+    private lateinit var model: WeatherContract.Model
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -87,7 +88,12 @@ class TodayFragment : Fragment(), WeatherContract.View {
     }
 
     override fun showErrorMessage(errorMsg: String?) {
-        TODO("Not yet implemented")
+        Snackbar.make(requireActivity().findViewById(R.id.container), errorMsg.toString(), Snackbar.LENGTH_INDEFINITE).apply {
+            setAction("Try again") {
+                presenter.getWeatherData()
+            }
+            show()
+        }
     }
 
     override fun finish() {

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.veselove.weatherapplicationtest.*
 import com.veselove.weatherapplicationtest.databinding.FragmentForecastBinding
 import com.veselove.weatherapplicationtest.pojo.ForecastModel
@@ -66,7 +67,12 @@ class ForecastFragment : Fragment(), WeatherContract.View {
     }
 
     override fun showErrorMessage(errorMsg: String?) {
-        TODO("Not yet implemented")
+        Snackbar.make(requireActivity().findViewById(R.id.container), errorMsg.toString(), Snackbar.LENGTH_INDEFINITE).apply {
+            setAction("Try again") {
+                presenter.getWeatherData()
+            }
+            show()
+        }
     }
 
     override fun finish() {

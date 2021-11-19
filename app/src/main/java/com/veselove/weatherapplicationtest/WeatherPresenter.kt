@@ -10,6 +10,8 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import java.util.*
+import java.lang.RuntimeException
+
 
 class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model,
                        processTread: Scheduler, mainThread: Scheduler
@@ -46,7 +48,14 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
 
                 override fun onError(e: Throwable) {
                     Log.i("tempLog", "RxJava Observer says onError")
-                    Log.i("tempLog", "${e.message}")
+                    Log.i("tempLog", "message ${e.message}")
+                    Log.i("tempLog", "printStackTrace ${e.printStackTrace()}")
+                    Log.i("tempLog", "localizedMessage ${e.localizedMessage}")
+                    if (e is RuntimeException) {
+                        view.showErrorMessage("Server error")
+                    } else {
+                        view.showErrorMessage("Network connection error")
+                    }
                 }
             }
         ))
