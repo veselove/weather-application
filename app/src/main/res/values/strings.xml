@@ -8,4 +8,8 @@
     <string name="rain_volume">%1$s mm</string>
     <string name="pressure_ground">%1$d hPa</string>
     <string name="wind_speed">%1$d km/h</string>
+    <string name="dialog_title">Location permission necessary</string>
+    <string name="dialog_message">In order to use the Weather Application you need to provide
+        location permission</string>
+    <string name="dialog_ok">Ok</string>
 </resources>
