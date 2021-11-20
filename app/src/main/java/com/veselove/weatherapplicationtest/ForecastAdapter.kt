@@ -23,7 +23,7 @@ class ForecastAdapter constructor(private val forecastModel: ForecastModel) : Re
             tvDayOfWeek.text = forecastUnit.dayOfWeek
             ivWeather3h.setImageResource(forecastUnit.weatherIcon)
             tvTime3h.text = forecastUnit.time
-            tvWeatherDescription3h.text = forecastUnit.weatherDescription
+            tvWeatherDescription3h.text = forecastUnit.weatherDescription.replaceFirstChar{it.uppercase()}
             tvTemperature3h.text = forecastUnit.temperature
         }
     }

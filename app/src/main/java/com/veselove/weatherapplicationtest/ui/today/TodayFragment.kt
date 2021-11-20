@@ -76,9 +76,8 @@ class TodayFragment : Fragment(), WeatherContract.View {
 
         binding.ivWeatherMain.setImageResource(forecastModel.weather[0].weatherIcon)
 
-        binding.tvTemperature.text = getString(R.string.temperature, forecastModel.weather[0].temperature)
-
-        binding.tvWeatherMain.text = forecastModel.weatherDescription
+        binding.tvTemperatureAndWeatherDescription.text = getString(R.string.temperature,
+            forecastModel.weather[0].temperature, forecastModel.weatherDescription)
 
         binding.tvHumidity.text = getString(R.string.humidity, forecastModel.humidity)
 

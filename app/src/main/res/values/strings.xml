@@ -3,7 +3,7 @@
     <string name="title_today">Today</string>
     <string name="title_forecast">Forecast</string>
     <string name="empty"> </string>
-    <string name="temperature">%1$sС</string>
+    <string name="temperature">%1$sС | %2$s</string>
     <string name="humidity">%1$d %%</string>
     <string name="rain_volume">%1$s mm</string>
     <string name="pressure_ground">%1$d hPa</string>
@@ -12,4 +12,5 @@
     <string name="dialog_message">In order to use the Weather Application you need to provide
         location permission</string>
     <string name="dialog_ok">Ok</string>
+    <string name="share_button">Share</string>
 </resources>
