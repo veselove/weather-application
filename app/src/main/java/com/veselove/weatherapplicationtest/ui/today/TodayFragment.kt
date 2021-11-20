@@ -1,10 +1,12 @@
 package com.veselove.weatherapplicationtest.ui.today
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.veselove.weatherapplicationtest.*
@@ -22,6 +24,7 @@ class TodayFragment : Fragment(), WeatherContract.View {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private var shareForecast = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +40,8 @@ class TodayFragment : Fragment(), WeatherContract.View {
         presenter.getWeatherData()
         //imageView = findViewById(R.id.imageView)
         //button = findViewById(R.id.button)
+
+        binding.btnShare.setOnClickListener { shareForecast() }
 
         return root
     }
@@ -85,6 +90,18 @@ class TodayFragment : Fragment(), WeatherContract.View {
 
         binding.tvWindDirection.text = forecastModel.windDirection
 
+        binding.btnShare.visibility = View.VISIBLE
+
+    }
+
+    private fun shareForecast() {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, presenter.shareForecast())
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     override fun showErrorMessage(errorMsg: String?) {

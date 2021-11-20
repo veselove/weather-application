@@ -6,10 +6,25 @@
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/tvDayOfWeekToday"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="today"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:textAllCaps="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guidelineTop"
+        app:layout_constraintHorizontal_bias="0.05"/>
+
+    <TextView
         android:id="@+id/tvDayOfWeek"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="today"
+        android:visibility="gone"
         android:textSize="16sp"
         android:textColor="@color/black"
         android:textAllCaps="true"

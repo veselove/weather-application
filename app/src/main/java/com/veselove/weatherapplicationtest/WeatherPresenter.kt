@@ -11,7 +11,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import java.util.*
 
-
 class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model,
                        processTread: Scheduler, mainThread: Scheduler
 ) : WeatherContract.Presenter{
@@ -21,6 +20,7 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
     var model: WeatherContract.Model = model
     var processThread: Scheduler = processTread
     var mainThread: Scheduler = mainThread
+    var forecastForShare = ""
 
     /**
      * Initializes the basic UI based on requirement.
@@ -81,8 +81,6 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
                 weatherMutableList[n].weatherDescription = weatherResponse.list[n].weather[0].description
             }
 
-            weatherMutableList[0].dayOfWeek = "today"
-
             val immutableWeatherList = Collections.unmodifiableList(weatherMutableList)
 
             val forecastModel = ForecastModel(location,
@@ -96,6 +94,7 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
 
             view.showWeatherData(forecastModel)
             showModelInLog(forecastModel)
+            createForecastForShare(forecastModel)
     }
 
     private fun azimuthToAbbreviationConverter(azimuth: Int): String {
@@ -142,13 +141,13 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
         val calendar = Calendar.getInstance()
         calendar.time = date
         return when (calendar.get(Calendar.DAY_OF_WEEK)) {
-            1 -> "SUNDAY"
-            2 -> "MONDAY"
-            3 -> "TUESDAY"
-            4 -> "WEDNESDAY"
-            5 -> "THURSDAY"
-            6 -> "FRIDAY"
-            7 -> "SATURDAY"
+            1 -> "Sunday"
+            2 -> "Monday"
+            3 -> "Tuesday"
+            4 -> "Wednesday"
+            5 -> "Thursday"
+            6 -> "Friday"
+            7 -> "Saturday"
             else -> "N/A"
         }
     }
@@ -173,6 +172,23 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
             model.weather[n].temperature + " " +
             model.weather[n].weatherDescription)
         }
+    }
+
+    private fun createForecastForShare(model: ForecastModel) {
+        val sb = StringBuilder()
+        sb.append("5 Days Weather Forecast:\n")
+        for (n in model.weather.indices) {
+            sb.append(model.weather[n].dayOfWeek + " " + model.weather[n].time +
+                    ", temperature: " + model.weather[n].temperature + "C, " +
+                    model.weather[n].weatherDescription + ";\n")
+        }
+        sb.setLength(sb.length - 2)
+        sb.append(".")
+        forecastForShare = sb.toString()
+    }
+
+    override fun shareForecast(): String {
+        return forecastForShare
     }
 
     override fun onDestroy() {

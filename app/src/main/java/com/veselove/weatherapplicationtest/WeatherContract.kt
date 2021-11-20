@@ -16,6 +16,7 @@ interface WeatherContract {
     interface Presenter {
         fun getWeatherData()
         fun handleWeatherResponse(weatherResponse: WeatherResponse)
+        fun shareForecast(): String
         fun init()
         fun onDestroy()
     }
