@@ -14,7 +14,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import com.veselove.weatherapplicationtest.utils.Coord
+import com.veselove.weatherapplicationtest.utils.Coordinates
 
 class LocationActivity : AppCompatActivity(), LocationListener {
 
@@ -35,9 +35,11 @@ class LocationActivity : AppCompatActivity(), LocationListener {
     }
 
     private fun hasLocationPermission(): Boolean {
-        return (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        return (ActivityCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                && ActivityCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED
                 )
     }
@@ -76,8 +78,8 @@ class LocationActivity : AppCompatActivity(), LocationListener {
             val location = provider?.let { locationManager.getLastKnownLocation(it) }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0f, this)
             if (location != null) {
-                Coord.lat = location.latitude
-                Coord.lon = location.longitude
+                Coordinates.lat = location.latitude
+                Coordinates.lon = location.longitude
             }
             val intent = Intent(this, WeatherActivity::class.java)
             startActivity(intent)

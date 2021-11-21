@@ -1,11 +1,11 @@
 package com.veselove.weatherapplicationtest
 
-import android.util.Log
 import com.veselove.weatherapplicationtest.pojo.ForecastModel
 import com.veselove.weatherapplicationtest.pojo.ForecastUnit
 import com.veselove.weatherapplicationtest.pojo.WeatherResponse
 import com.veselove.weatherapplicationtest.utils.Constants.Companion.API_KEY
-import com.veselove.weatherapplicationtest.utils.Coord
+import com.veselove.weatherapplicationtest.utils.Constants.Companion.UNITS_METRIC
+import com.veselove.weatherapplicationtest.utils.Coordinates
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -22,33 +22,20 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
     var mainThread: Scheduler = mainThread
     var forecastForShare = ""
 
-    /**
-     * Initializes the basic UI based on requirement.
-     */
-    override fun init() {
-        view.onInitView()
-    }
-
     override fun getWeatherData() {
-        val apiKey: String = API_KEY
-        val units = "metric"
         compositeDisposable.add(
-            model.loadForecast(Coord.lat, Coord.lon, apiKey, units).subscribeOn(processThread).observeOn(
+            model.loadForecast(Coordinates.lat, Coordinates.lon, API_KEY, UNITS_METRIC).subscribeOn(processThread).observeOn(
                 mainThread
             ).subscribeWith(object : DisposableObserver<WeatherResponse>() {
                 override fun onComplete() {
-                    Log.i("tempLog", "RxJava Observer says onComplete")
                 }
 
                 override fun onNext(weatherResponse: WeatherResponse) {
                     handleWeatherResponse(weatherResponse)
-                    Log.i("tempLog", "RxJava Observer says onNext")
                 }
 
                 override fun onError(e: Throwable) {
-                    Log.i("tempLog", "RxJava Observer says onError")
-                    Log.i("tempLog", "message ${e.message}")
-                    view.showErrorMessage("Error")
+                    view.showErrorMessage(R.string.error_message.toString())
                 }
             }
         ))
@@ -61,19 +48,16 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
             val humidity = weatherResponse.list[0].main.humidity
             val pressureGroundLevel = weatherResponse.list[0].main.grnd_level
             val windSpeed = weatherResponse.list[0].wind.speed.toInt()
-            val rainVolume = if (weatherResponse.list[0].weather[0].main == "Rain") {
-                weatherResponse.list[0].rain.`3h`.toString()
+            val rainVolume = if (weatherResponse.list[0].weather[0].main ==
+                "Rain") { weatherResponse.list[0].rain.`3h`.toString()
             } else {"0.0"}
             val windDirection = azimuthToAbbreviationConverter(weatherResponse.list[0].wind.deg)
-
             val weatherMutableList = mutableListOf<ForecastUnit>()
-
-            for (i in weatherResponse.list.indices) {       //не очень хороший способ увеличить размер до 40
+            for (i in weatherResponse.list.indices) {
                 weatherMutableList.add(ForecastUnit())
             }
 
             for (n in weatherResponse.list.indices) {
-
                 weatherMutableList[n].weatherIcon = iconPicker(weatherResponse.list[n].weather[0].icon)
                 weatherMutableList[n].dayOfWeek = unixToDayOfWeekConverter(weatherResponse.list[n].dt)
                 weatherMutableList[n].time = unixToTimeConverter(weatherResponse.list[n].dt)
@@ -82,7 +66,6 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
             }
 
             val immutableWeatherList = Collections.unmodifiableList(weatherMutableList)
-
             val forecastModel = ForecastModel(location,
                 immutableWeatherList,
                 weatherDescription,
@@ -93,7 +76,6 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
                 windDirection)
 
             view.showWeatherData(forecastModel)
-            showModelInLog(forecastModel)
             createForecastForShare(forecastModel)
     }
 
@@ -157,21 +139,6 @@ class WeatherPresenter(mView: WeatherContract.View, model: WeatherContract.Model
         val calendar = Calendar.getInstance()
         calendar.time = date
         return calendar.get(Calendar.HOUR_OF_DAY).toString() + ":00"
-    }
-
-    private fun showModelInLog(model: ForecastModel) {
-        Log.i("weatherModelInfo", model.weatherDescription + " " +
-                model.humidity + " " +
-                model.pressureGroundLevel + " " +
-                model.windSpeed + " " +
-                model.windDirection)
-        for (n in model.weather.indices) {
-            Log.i("weatherModelInfo", model.weather[n].weatherIcon.toString() + " " +
-            model.weather[n].dayOfWeek + " " +
-            model.weather[n].time + " " +
-            model.weather[n].temperature + " " +
-            model.weather[n].weatherDescription)
-        }
     }
 
     private fun createForecastForShare(model: ForecastModel) {

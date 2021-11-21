@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.veselove.weatherapplicationtest.pojo.ForecastModel
 import com.veselove.weatherapplicationtest.pojo.ForecastUnit
 
-class ForecastAdapter constructor(private val forecastModel: ForecastModel) : RecyclerView.Adapter<ForecastAdapter.ForecastHolder>() {
+class ForecastAdapter constructor(private val forecastModel: ForecastModel) :
+    RecyclerView.Adapter<ForecastAdapter.ForecastHolder>() {
 
     class ForecastHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -31,30 +32,27 @@ class ForecastAdapter constructor(private val forecastModel: ForecastModel) : Re
     override fun getItemViewType(position: Int): Int {
         if (position == 0) {
             return TYPE_TODAY
-        } else {
-            if (forecastModel.weather[position].time == "0:00" ||
-                forecastModel.weather[position].time == "1:00" ||
-                forecastModel.weather[position].time == "2:00") {
-                return TYPE_NEW_DAY
-            } else {
-                if (forecastModel.weather[position].time == "21:00" ||
-                    forecastModel.weather[position].time == "22:00" ||
-                    forecastModel.weather[position].time == "23:00") {
-                    return TYPE_LAST
-                } else return TYPE_REGULAR
-            }
         }
+        if (forecastModel.weather[position].time == "0:00" ||
+            forecastModel.weather[position].time == "1:00" ||
+            forecastModel.weather[position].time == "2:00") {
+            return TYPE_NEW_DAY
+        }
+        if (forecastModel.weather[position].time == "21:00" ||
+            forecastModel.weather[position].time == "22:00" ||
+            forecastModel.weather[position].time == "23:00") {
+            return TYPE_LAST
+        }
+        return TYPE_REGULAR
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForecastHolder {
         val layout = when (viewType) {
-            TYPE_REGULAR -> R.layout.forecast_rv_item
             TYPE_TODAY -> R.layout.forecast_rv_item_today
             TYPE_NEW_DAY -> R.layout.forecast_rv_item_new_day
             TYPE_LAST -> R.layout.forecast_rv_item_last
             else -> R.layout.forecast_rv_item
         }
-
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
         return ForecastHolder(view)
     }
@@ -69,10 +67,10 @@ class ForecastAdapter constructor(private val forecastModel: ForecastModel) : Re
     }
 
     companion object {
-        private const val TYPE_REGULAR = 0
         private const val TYPE_TODAY = 1
         private const val TYPE_NEW_DAY = 2
         private const val TYPE_LAST = 3
+        private const val TYPE_REGULAR = 0
     }
 
 }

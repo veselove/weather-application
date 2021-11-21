@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.today.TodayFragment">
+    tools:context=".ui.TodayFragment">
 
     <ImageView
         android:id="@+id/ivWeatherMain"
@@ -88,7 +88,7 @@
         android:textSize="16sp"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.17"
+        app:layout_constraintHorizontal_bias="0.18"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivHumidity" />
 
@@ -140,7 +140,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivPressureGroundLevel"
-        app:layout_constraintHorizontal_bias="0.83"/>
+        app:layout_constraintHorizontal_bias="0.85"/>
 
     <ImageView
         android:id="@+id/ivWindSpeed"
@@ -190,7 +190,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivWindDirection"
-        app:layout_constraintHorizontal_bias="0.68"/>
+        app:layout_constraintHorizontal_bias="0.67"/>
 
     <View
         android:id="@+id/dividerBottom"
@@ -210,7 +210,7 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/share_button"
+        android:text="@string/today_share_button"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

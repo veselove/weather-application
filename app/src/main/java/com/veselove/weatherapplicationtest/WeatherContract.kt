@@ -6,22 +6,19 @@ import io.reactivex.Observable
 
 interface WeatherContract {
     interface View {
-        fun onInitView()
-        fun handleLoaderView(isLoading: Boolean)
         fun showWeatherData(forecastModel: ForecastModel)
         fun showErrorMessage(errorMsg: String?)
-        fun finish()
     }
 
     interface Presenter {
         fun getWeatherData()
         fun handleWeatherResponse(weatherResponse: WeatherResponse)
         fun shareForecast(): String
-        fun init()
         fun onDestroy()
     }
 
     interface Model {
-        fun loadForecast(latitude: Double, longitude: Double, apiKey: String, units: String): Observable<WeatherResponse>
+        fun loadForecast(latitude: Double, longitude: Double, apiKey: String, units: String):
+                Observable<WeatherResponse>
     }
 }
